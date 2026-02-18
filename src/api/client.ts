@@ -15,30 +15,40 @@ export const apiFetch = async <T>(
   options: RequestInit = {}
 ): Promise<T> => {
   const hasBody = Boolean(options.body);
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      ...buildHeaders(hasBody),
-      ...(options.headers || {})
+  const fullUrl = `${API_BASE_URL}${path}`;
+  
+  try {
+    const res = await fetch(fullUrl, {
+      ...options,
+      headers: {
+        ...buildHeaders(hasBody),
+        ...(options.headers || {})
+      }
+    });
+
+    if (!res.ok) {
+      let message = `Request failed (${res.status})`;
+      try {
+        const data = await res.json();
+        message = data?.message || message;
+      } catch {
+        // ignore
+      }
+      console.error(`❌ API Error [${res.status}]:`, message, 'URL:', fullUrl);
+      throw new Error(message);
     }
-  });
 
-  if (!res.ok) {
-    let message = `Request failed (${res.status})`;
-    try {
-      const data = await res.json();
-      message = data?.message || message;
-    } catch {
-      // ignore
+    if (res.status === 204) {
+      return {} as T;
     }
-    throw new Error(message);
-  }
 
-  if (res.status === 204) {
-    return {} as T;
+    const data = await res.json() as Promise<T>;
+    console.log(`✅ API Success [${res.status}]:`, path);
+    return data;
+  } catch (error) {
+    console.error(`❌ API Request Error:`, error, 'URL:', fullUrl);
+    throw error;
   }
-
-  return res.json() as Promise<T>;
 };
 
 export const setAuthToken = (token: string | null) => {

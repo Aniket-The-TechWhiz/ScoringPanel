@@ -64,6 +64,7 @@ export function Root() {
 
   // Handle login
   const handleLogin = (user: User) => {
+    console.log('🔐 User logged in:', { userId: user.id, role: user.role });
     setCurrentUser(user);
     localStorage.setItem('current_user', JSON.stringify(user));
     if (user.role === 'admin') {
@@ -167,12 +168,19 @@ export function Root() {
 
     const loadAdminData = async () => {
       try {
+        console.log('🔄 Loading admin data...');
         const [domains, teamsResRaw, judgesRes] = await Promise.all([
           listDomains(),
           listTeams(),
           listJudges()
         ]);
         const teamsRes: any = teamsResRaw;
+        
+        console.log('✅ Backend data loaded:', {
+          domains: domains?.length,
+          teams: teamsRes?.length,
+          judges: judgesRes?.length
+        });
 
         const domainKeysLoaded = domains.map(d => d.key);
 
@@ -286,6 +294,7 @@ export function Root() {
 
         setScores(allScores);
       } catch (error) {
+        console.error('❌ Error loading admin data:', error);
         // fallback to mock data
       }
     };
@@ -426,6 +435,8 @@ export function Root() {
     const domainKey = team ? (domainNameToKey.get(team.domain) || team.domain) : undefined;
     const round = scoreData.round || (currentUser?.judgeProfile?.type === 'External' ? 'Round 2' : 'Round 1');
 
+    console.log('📤 Submitting score:', { teamId: scoreData.teamId, domainKey, round });
+
     try {
       if (round === 'Round 2') {
         await submitRoundTwoScore({
@@ -443,7 +454,9 @@ export function Root() {
           ...mapScoreToPayload(scoreData.eventId, scoreData)
         });
       }
+      console.log('✅ Score submitted successfully');
     } catch (error: any) {
+      console.error('❌ Error submitting score:', error?.message);
       alert(error?.message || 'Failed to submit score');
       throw error;
     }

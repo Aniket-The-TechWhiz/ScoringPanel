@@ -229,3 +229,34 @@ export const listRoundTwoResults = () => apiFetch<ApiRoundTwoResult[]>('/api/rou
 
 export const listRoundTwoAllocations = (judgeId?: string) =>
   apiFetch<ApiRoundTwoAllocation[]>(`/api/round-two/allocations${judgeId ? `?judgeId=${judgeId}` : ''}`);
+
+export const exportRoundTwoResults = async () => {
+  const token = localStorage.getItem('auth_token');
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  
+  const res = await fetch(`${(import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:4000'}/api/round-two/export`, {
+    headers
+  });
+  
+  if (!res.ok) {
+    throw new Error('Failed to export Round 2 results');
+  }
+  
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `round2_results_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
+export const getTeam = (id: string) => apiFetch<ApiTeam>(`/api/teams/${id}`);
+
+export const getJudge = (id: string) => apiFetch<ApiJudge>(`/api/judges/${id}`);
+
+export const createScoresBulkAdmin = (payload: { scores: any[] } | any[]) =>
+  apiFetch('/api/scores/bulk/admin', { method: 'POST', body: JSON.stringify(payload) });

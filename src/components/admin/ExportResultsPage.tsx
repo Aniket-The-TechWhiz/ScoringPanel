@@ -2,7 +2,7 @@ import { Download } from 'lucide-react';
 import { Event, Team, Score, Judge } from '../../types';
 import * as XLSX from 'xlsx';
 import { exportAllRound1ScoresToExcel, exportRound2ResultsToExcel } from '../../utils/excelExport';
-import { listRoundOneResults } from '../../api/scoringApi';
+import { listRoundOneResults, exportRoundTwoResults } from '../../api/scoringApi';
 import { toast } from 'sonner';
 
 interface ExportResultsPageProps {
@@ -234,6 +234,19 @@ export function ExportResultsPage({ events, teams, scores, judges }: ExportResul
     }
   };
 
+  const handleExportRound2CSV = async () => {
+    const toastId = toast.loading('Downloading Round 2 results CSV...');
+    try {
+      await exportRoundTwoResults();
+      toast.dismiss(toastId);
+      toast.success('Round 2 CSV downloaded successfully!');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.dismiss(toastId);
+      toast.error('Failed to download Round 2 CSV');
+    }
+  };
+
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Header */}
@@ -307,13 +320,22 @@ export function ExportResultsPage({ events, teams, scores, judges }: ExportResul
             </ul>
           </div>
 
-          <button
-            onClick={handleExportRound2Results}
-            className="w-full px-4 py-3 bg-amber-600 hover:bg-amber-700 text-black rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-          >
-            <Download className="size-5" />
-            Export Round 2 Results
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={handleExportRound2Results}
+              className="w-full px-4 py-3 bg-amber-600 hover:bg-amber-700 text-black rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+            >
+              <Download className="size-5" />
+              Export as Excel
+            </button>
+            <button
+              onClick={handleExportRound2CSV}
+              className="w-full px-4 py-3 bg-amber-500 hover:bg-amber-600 text-black rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+            >
+              <Download className="size-5" />
+              Download as CSV
+            </button>
+          </div>
         </div>
       </div>
 

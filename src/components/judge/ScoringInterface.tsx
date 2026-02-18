@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router'
-import { ArrowLeft, Send, Users, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Send, Users, CheckCircle, Plus, Minus } from 'lucide-react'
 import { Event, Team, Score, User } from '../../types'
 
 interface ScoringInterfaceProps {
@@ -302,25 +302,33 @@ export function ScoringInterface({
       </div>
 
       <div className="bg-green-50 border border-green-300 rounded-xl p-6">
-        <p className="font-semibold text-green-800 mb-2">
+        <p className="font-semibold text-green-800 mb-4">
           Bonus Marks (Optional)
         </p>
-        <input
-          type="number"
-          step={0.1}
-          min={0}
-          max={5}
-          value={Number.isFinite(bonusScore) ? bonusScore : 0}
-          onChange={e => {
-            const raw = e.target.value;
-            if (raw === '') {
-              setBonusScore(0);
-              return;
-            }
-            setBonusScore(Number(raw));
-          }}
-          className="w-24 text-center border rounded-lg"
-        />
+        <div className="flex items-center gap-4 justify-center">
+          <button
+            onClick={() => setBonusScore(Math.max(0, bonusScore - 0.5))}
+            className="p-3 bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition-all shadow-md hover:shadow-lg"
+            disabled={bonusScore <= 0}
+          >
+            <Minus size={20} />
+          </button>
+          
+          <div className="text-center">
+            <p className="text-3xl font-bold text-green-700">
+              {Number.isFinite(bonusScore) ? bonusScore.toFixed(1) : '0.0'}
+            </p>
+            <p className="text-xs text-green-600 mt-1">/ 5.0</p>
+          </div>
+          
+          <button
+            onClick={() => setBonusScore(Math.min(5, bonusScore + 0.5))}
+            className="p-3 bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition-all shadow-md hover:shadow-lg"
+            disabled={bonusScore >= 5}
+          >
+            <Plus size={20} />
+          </button>
+        </div>
       </div>
 
       <button
