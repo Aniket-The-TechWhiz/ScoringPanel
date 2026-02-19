@@ -1,4 +1,3 @@
-// Use absolute API paths or environment variable
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://34.47.198.176';
 
 const getToken = () => localStorage.getItem('auth_token');
