@@ -1,6 +1,5 @@
-// Always use relative API paths for Netlify proxy to backend
-// DO NOT use any base URL or hardcoded http://... here!
-const API_BASE_URL = '';
+// Use absolute API paths or environment variable
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://34.47.198.176';
 
 const getToken = () => localStorage.getItem('auth_token');
 
@@ -18,7 +17,7 @@ export const apiFetch = async <T>(
 ): Promise<T> => {
   const hasBody = Boolean(options.body);
   const fullUrl = `${API_BASE_URL}${path}`;
-  
+
   try {
     const res = await fetch(fullUrl, {
       ...options,

@@ -3,7 +3,6 @@
   publish = "build"
 
 [[redirects]]
-  from = "/api/*"
-  to = "http://34.47.198.176/api/:splat"
+  from = "/*"
+  to = "/index.html"
   status = 200
-  force = true

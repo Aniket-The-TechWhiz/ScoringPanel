@@ -234,15 +234,15 @@ export const exportRoundTwoResults = async () => {
   const token = localStorage.getItem('auth_token');
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
-  
-  const res = await fetch(`${(import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:4000'}/api/round-two/export`, {
+
+  const res = await fetch(`${(import.meta.env.VITE_API_BASE_URL as string) || 'http://34.47.198.176'}/api/round-two/export`, {
     headers
   });
-  
+
   if (!res.ok) {
     throw new Error('Failed to export Round 2 results');
   }
-  
+
   const blob = await res.blob();
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
