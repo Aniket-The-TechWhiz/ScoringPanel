@@ -1,3 +1,7 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 # Netlify configuration for proxying API requests to backend
 [build]
   publish = "build"
