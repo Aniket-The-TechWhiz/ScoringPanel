@@ -1,0 +1,9 @@
+# Netlify configuration for proxying API requests to backend
+[build]
+  publish = "build"
+
+[[redirects]]
+  from = "/api/*"
+  to = "http://34.47.198.176/api/:splat"
+  status = 200
+  force = true
